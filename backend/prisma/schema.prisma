@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username     String
+  email     String
+  password  String
+  preference String?
+  days Day[]
+  createdAt DateTime @default(now())
+}
+
+model Day {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  state     DayState
+  note  String?
+  is_public Boolean
+  user_id Int
+  user User @relation(fields: [user_id], references: [id])
+  item DayItem[]
+  createdAt DateTime @default(now())
+}
+
+enum DayState{
+  good
+  neutral
+  bad
+}
+
+model DayItem{
+  id Int @id @default(autoincrement())
+  content String
+  type ItemType
+  day_id Int
+  day Day @relation(fields: [day_id], references: [id])
+}
+
+enum ItemType{
+  good
+  bad
+}
+
